@@ -13,7 +13,7 @@
     <br />
     <button @click="mutatethis">Crear con GraphQL</button>
     <button @click="toREST">Crear con REST</button>
-    <h2> {{msg}} </h2>
+    <h2>{{msg}}</h2>
   </div>
 </template>
 
@@ -32,8 +32,11 @@ export default {
   },
   methods: {
     toREST() {
-      axios("localhost:4000/sa-auth-ms/resources/users", {
+      axios("http://localhost:4000/sa-auth-ms/resources/users", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
         data: {
           firstName: this.User.firstName,
           lastName: this.User.lastName,
@@ -42,7 +45,17 @@ export default {
         }
       })
         .then(response => {
-          this.msg = "Usuario creado satisfactoriamente desde API Gateway: " + "Nombre: " + response.data.data.createUser.firstName + ", Apellido: " + response.data.data.createUser.lastName + ", Nombre Usuario: " + response.data.data.createUser.username + ", Contraseña: " + response.data.data.createUser.password
+          console.log(response.data.firstName);
+          this.msg =
+            "Usuario creado satisfactoriamente desde MicroServicio: " +
+            "Nombre: " +
+            response.data.firstName+ 
+            ", Apellido: " +
+            response.data.lastName +
+            ", Nombre Usuario: " +
+            response.data.username +
+            ", Contraseña: " +
+            response.data.password;
         })
         .catch(error => {
           console.log(error);
@@ -50,32 +63,52 @@ export default {
         });
     },
     mutatethis() {
-
-      const CREATE_USER = gql `
-        mutation createUser($firstName: String!, $lastName: String!, $username: String!, $password: String!){
-          createUser(user: {firstName: $firstName, lastName: $lastName, username: $username, password: $password})
-          {
+      const CREATE_USER = gql`
+        mutation createUser(
+          $firstName: String!
+          $lastName: String!
+          $username: String!
+          $password: String!
+        ) {
+          createUser(
+            user: {
+              firstName: $firstName
+              lastName: $lastName
+              username: $username
+              password: $password
+            }
+          ) {
             firstName
             lastName
             username
             password
           }
-      }`
+        }
+      `;
       axios({
         method: "POST",
         url: "http://localhost:5000/graphql",
-        data:{
+        data: {
           query: print(CREATE_USER),
-          variables:{
+          variables: {
             firstName: this.User.firstName,
             lastName: this.User.lastName,
             username: this.User.username,
             password: this.User.password
           }
         }
-      }).then(response=>{
-        this.msg = "Usuario creado satisfactoriamente desde API Gateway: " + "Nombre: " + response.data.data.createUser.firstName + ", Apellido: " + response.data.data.createUser.lastName + ", Nombre Usuario: " + response.data.data.createUser.username + ", Contraseña: " + response.data.data.createUser.password
-      });      
+      }).then(response => {
+        this.msg =
+          "Usuario creado satisfactoriamente desde API Gateway: " +
+          "Nombre: " +
+          response.data.data.createUser.firstName +
+          ", Apellido: " +
+          response.data.data.createUser.lastName +
+          ", Nombre Usuario: " +
+          response.data.data.createUser.username +
+          ", Contraseña: " +
+          response.data.data.createUser.password;
+      });
       /*
       var firstName=this.User.firstName;
       var lastName=this.User.lastName;
@@ -108,11 +141,8 @@ li {
 }
 a {
   color: #42b983;
-}                firstName
-                lastName
-                username
-                password
-h5 {
+}
+firstName lastName username password h5 {
   text-align: center;
   color: #2c3e50;
 }
