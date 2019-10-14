@@ -42,11 +42,10 @@ export default {
         }
       })
         .then(response => {
-          alert(response.config.data);
-          console.log(response);
+          this.msg = "Usuario creado satisfactoriamente desde API Gateway: " + "Nombre: " + response.data.data.createUser.firstName + ", Apellido: " + response.data.data.createUser.lastName + ", Nombre Usuario: " + response.data.data.createUser.username + ", Contraseña: " + response.data.data.createUser.password
         })
         .catch(error => {
-          console.log(error);
+          this.msg = error;
         });
     },
     mutatethis() {
