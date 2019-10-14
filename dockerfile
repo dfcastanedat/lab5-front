@@ -1,7 +1,6 @@
 FROM node:lts-alpine
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
-COPY node_modules app/node_modules
 RUN npm install
 RUN npm install @vue/cli@3.7.0 -g
 RUN npm install apollo
